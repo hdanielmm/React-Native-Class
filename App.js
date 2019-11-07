@@ -1,41 +1,100 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, FlatList } from 'react-native';
+import { StyleSheet, Text, View, TextInput, FlatList, TouchableHighlight, Alert } from 'react-native';
 
 export default function App() {
-  const [tasks, setTasks] = useState('');
-  const [task, setTask] = useState('');
+  const [products, setProducts] = useState('');
+  const [product, setProduct] = useState('');
+  const [value, setValue] = useState('');
+  const [values, setValues] = useState('');
 
-  function handleChange(text) {
-    setTask(text);
+  function handleChangeProduct(text) {
+    console.log(text);
+    setProduct(text);
+  }
+
+  function handleChangeValue(text) {
+    console.log(text);
+    setValue(text);
   }
 
   function handleSubmit() {
-    const newTask = {
-      id: tasks.length,
-      task,
-    };
-    setTasks([...tasks, newTask]);
+    console.log("product: " + product.length);
+
+    if (product.length > 0 && value.length > 0) {
+      const newProduct = {
+        id: products.length,
+        product,
+      };
+      
+      setProducts([...products, newProduct]);
+
+      const newValue = {
+        id: values.length,
+        value,
+      };
+      setValues([...values, newValue]);
+    } else {
+      Alert.alert('Error!', 'Each input is require', []);
+    }
+    setProduct("");
+    setValue("");
   }
 
   return (
     <View style={styles.container}>
-      <Text>To Do App</Text>
-      <Text>Never seen before</Text>
-      <FlatList
-        style={styles.list}
-        data={tasks}
-        renderItem={({item}) => <Text>{item.task}</Text>}
-        keyExtractor={task => task.id}
-      />
-      {/* <Text>{task}</Text> */}
+
+      <Text style={styles.title}>Wallmart App</Text>
+      <Text style={styles.title}>The best store to buy</Text>
+
+      <View style={styles.products}>
+        
+        <View>
+          <Text>Product</Text>
+          <FlatList
+            key={product.id}
+            style={styles.list}
+            data={products}
+            renderItem={({ item }) => <Text>{item.product}</Text>}
+            keyExtractor={(product, index) => (product.id, index.toString())}
+          />
+        </View>
+
+        <View>
+          <Text>Price ($)</Text>
+          <FlatList
+            key={value.id}
+            style={styles.list}
+            data={values}
+            renderItem={({ item }) => <Text>{item.value}</Text>}
+            keyExtractor={(value, index) => (value.id, index.toString())}
+          />
+        </View>
+
+      </View>
+
       <TextInput
         style={styles.input}
-        placeholder="Crear nueva tarea"
-        onChangeText={handleChange}
-        onSubmitEditing={handleSubmit}
-        value={task}
+        placeholder="Agregar producto"
+        onChangeText={handleChangeProduct}
+        value={product}
         returnKeyType="done"
       />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Valor"
+        onChangeText={handleChangeValue}
+        value={value}
+        keyboardType="number-pad"
+        returnKeyType="done"
+      />
+
+      <TouchableHighlight
+        style={styles.button}
+        onPress={handleSubmit}
+      >
+        <Text style={styles.textButton}>Send</Text>
+      </TouchableHighlight>
     </View >
   );
 }
@@ -44,16 +103,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginTop: 30,
+    paddingLeft: 15,
+    paddingRight: 15,
+  },
+  button: {
+    backgroundColor: 'skyblue',
+    paddingTop: 15,
+    paddingBottom: 15,
+  },
+  textButton: {
+    textAlign: 'center',
+    color: 'white'
+  },
+  title: {
+    textAlign: 'center',
+    fontSize: 18,
+    marginBottom: 5
   },
   input: {
-    width: '100%',
-    height: 50,
+    height: 40,
+    borderColor: '#ccc',
     borderWidth: 1,
-    borderColor: '#333'
+    marginBottom: 20,
+    borderRadius: 4,
+    fontSize: 16,
   },
   list: {
     flex: 1
+  },
+  products: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around'
   }
 });
